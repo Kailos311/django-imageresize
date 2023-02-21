@@ -49,8 +49,8 @@
     </div>
 
     <script>
+        var name;
         var url;
-        var file;
         
         $("[for=id_path]").hide();
         //document.getElementById('id_name').classList.add("bg-gray-50", "border", "border-gray-300", "text-gray-900", "text-sm", "rounded-lg", "focus:ring-blue-500", "focus:border-blue-500", "block", "w-full", "p-2.5", "dark:bg-gray-700", "dark:border-gray-600", "dark:placeholder-gray-400", "dark:text-white", "dark:focus:ring-blue-500", "dark:focus:border-blue-500")
@@ -58,7 +58,7 @@
 
         $("#id_path").on('change', function(){ 
             image = document.getElementById('output');
-            file = event.target.files[0];
+            name = event.target.files[0]['name'];
             url = URL.createObjectURL(event.target.files[0]);
             console.log("here", event.target.files[0]);
             image.src=url;
@@ -82,9 +82,7 @@
         $("#btn_save").click(function(){
             $.post("http://localhost:8000/saveimage",
             {
-              type : 'Custom',
-              width : $('#width').value,
-              height : $('#height').value,
+              name: name,
             },
             function(data, status){
               console.log("Status: " + status);
