@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<body>
+
+    <div class="grid grid-cols-4 h-screen">
+
+        <div class="col-span-1 p-5 flex flex-col justify-around">
+            <div id="upload-button" class="flex justify-center" >
+                <div class="w-full">
+                    <form action = "http://localhost:8000/upload"method = "post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">Upload</button>
+                    </form>
+                </div>
+                {% comment %} <button onclick="opendialog()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Upload
+                </button> {% endcomment %}
+            </div>
+            <div class="flex justify-center">
+                <select id="image_type" class=" w-32 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option class="text-center" value="logo">Logo</option>
+                    <option class="text-center" value="picture">Picture</option>
+                </select>
+            </div>
+            <div>
+                <div class="flex items-center">
+                    <label for="width" class="mr-2 block mb-2 text-sm font-medium text-gray-900 dark:text-white">width</label>
+                    <input type="text" id="width" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                </div>
+                <div class="flex items-center my-10">
+                    <label for="height" class="mr-2 block mb-2 text-sm font-medium text-gray-900 dark:text-white">height</label>
+                    <input type="text" id="height" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                </div>
+                <div class="flex justify-center">
+                    <button id="btn_save"class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-3">
+            <div class="mt-2 flex justify-center items-center h-screen p-20" >
+                <img id="output" src="{{ imageurl }}">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var url;
+        var file;
+        
+        $("[for=id_path]").hide();
+        //document.getElementById('id_name').classList.add("bg-gray-50", "border", "border-gray-300", "text-gray-900", "text-sm", "rounded-lg", "focus:ring-blue-500", "focus:border-blue-500", "block", "w-full", "p-2.5", "dark:bg-gray-700", "dark:border-gray-600", "dark:placeholder-gray-400", "dark:text-white", "dark:focus:ring-blue-500", "dark:focus:border-blue-500")
+        //document.getElementById('id_path').classList.add("block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400")
+
+        $("#id_path").on('change', function(){ 
+            image = document.getElementById('output');
+            file = event.target.files[0];
+            url = URL.createObjectURL(event.target.files[0]);
+            console.log("here", event.target.files[0]);
+            image.src=url;
+        });
+
+
+//        var opendialog = function(){
+//            var input = document.createElement('input');
+//            input.type = 'file';
+//            input.name = "document";
+//
+//            input.onchange = event => { 
+//                image = document.getElementById('output');
+//                file = event.target.files[0];
+//                url = URL.createObjectURL(event.target.files[0]);
+//                console.log("here", event.target.files[0]);
+//                image.src=url;
+//            }
+//            input.click();
+//        }
+        $("#btn_save").click(function(){
+            $.post("http://localhost:8000/saveimage",
+            {
+              type : 'Custom',
+              width : $('#width').value,
+              height : $('#height').value,
+            },
+            function(data, status){
+              console.log("Status: " + status);
+            });
+          });
+    </script>
+
+</body>
+</html>
